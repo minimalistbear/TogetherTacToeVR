@@ -1,0 +1,21 @@
+{
+  "name": "tictacsocket",
+  "version": "1.0.0",
+  "description": "tic tac socket",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.tubit.tu-berlin.de/jstroemsdoerfer/TicTacSocket.git"
+  },
+  "author": "Marcörn",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "log-timestamp": "^0.2.1",
+    "mongodb": "^3.1.10",
+    "socket.io": "^2.2.0"
+  }
+}

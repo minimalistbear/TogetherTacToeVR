@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <title>TogetherTacToeVR</title>
+    <script src="/lib/socket.io/socket.io.js"></script>
+    <script src="/lib/aframe-v0.8.2.min.js"></script>
+    <script src="/js/TicTacToe.js"></script>
+    <script src="/js/app.js"></script>
+  </head>
+  <body>
+    <a-scene vr-mode-ui="enabled: false">
+      <a-assets>
+        <img id="skyTexture" src="/textures/background.jpg">
+      </a-assets>
+
+      <a-sky src="#skyTexture"></a-sky>
+
+      <a-entity camera look-controls>
+        <!--0 is shootable, 1 (aka human) is X is shotByX, 2 (aka bot) is O is shotByO-->
+        <a-entity cursor="fuse: false"
+                  raycaster="objects: .shootable, .button"
+                  position="0 0 -1"
+                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                  material="color: black"></a-entity>
+        <a-box position="    0  .015 -1" width=".005" height=" .01" depth=".00001" material="shader: flat; color: black"></a-box>
+        <a-box position="    0 -.015 -1" width=".005" height="-.01" depth=".00001" material="shader: flat; color: black"></a-box>
+        <a-box position=" .015     0 -1" width=" .01" height=".005" depth=".00001" material="shader: flat; color: black"></a-box>
+        <a-box position="-.015     0 -1" width="-.01" height=".005" depth=".00001" material="shader: flat; color: black"></a-box>
+        
+        <a-entity id="shootInstruction" position="0 .5 -1" text="value: Tap to choose!; align: center; color: black; font: lib/Roboto-msdf.json; fontImage: lib/Roboto-msdf.png" scale="2 2 2"></a-entity>
+        </a-entity>
+
+        <a-entity id="startScreenButtons" visible="true">
+                <a-text cursor-listener class="button" id="chooseDifficulty"
+                        position="0 1.4 -4"
+                        geometry="primitive: plane; width: 2.5; height: .7"
+                        align="center"
+                        material="color: green"
+                        text="value: DIFFICULTY: EASY; font: lib/Roboto-msdf.json; fontImage: lib/Roboto-msdf.png">
+                </a-text>
+                <a-text cursor-listener class="button" id="chooseSymbol"
+                        position="0 .6 -4"
+                        geometry="primitive: plane; width: 2.5; height: .7"
+                        align="center"
+                        material="color: blue"
+                        text="value: SYMBOL: X; font: lib/Roboto-msdf.json; fontImage: lib/Roboto-msdf.png">
+                </a-text>
+                <a-text cursor-listener class="button" id="startGameSingle"
+                        position="0 -.2 -4"
+                        geometry="primitive: plane; width: 2.5; height: .7"
+                        align="center"
+                        material="color: red"
+                        text="value: START SINGLEPLAYER; font: lib/Roboto-msdf.json; fontImage: lib/Roboto-msdf.png">
+                </a-text>
+                <a-text cursor-listener class="button" id="startGameMulti"
+                        position="0 -1.4 -4"
+                        geometry="primitive: plane; width: 2.5; height: .7"
+                        align="center"
+                        material="color: yellow"
+                        text="value: START MULTIPLAYER; font: lib/Roboto-msdf.json; fontImage: lib/Roboto-msdf.png; color: black">
+                </a-text>
+                <a-plane position="0 .6 -4.001" rotation="0 0 0" width="2.9" height="2.7" color="orange" material="opacity: 0.5"></a-plane>
+
+                <a-plane position="0 -1.4 -4.001" rotation="0 0 0" width="2.9" height="1.1" color="orange" material="opacity: 0.5"></a-plane>
+        </a-entity>
+      
+        <a-entity id="playingField" visible="false">
+                <a-box frame id="frame1" position="-.5   0 -4" width=".2" height=" 3" depth=".6" color="#123456"></a-box>
+                <a-box frame id="frame2" position=" .5   0 -4" width=".2" height=" 3" depth=".6" color="#123456"></a-box>
+                <a-box frame id="frame3" position="  0 -.5 -4" width=" 3" height=".2" depth=".6" color="#123456"></a-box>
+                <a-box frame id="frame4" position="  0  .5 -4" width=" 3" height=".2" depth=".6" color="#123456"></a-box>      
+
+                <a-box cursor-listener class="shootable" id="box0" 
+                        position=" -1  1 -4" width=".3" height=".3" depth=".3" 
+                        material="src: url(textures/yellowBg.jpeg)">
+                </a-box>
+                <a-box cursor-listener class="shootable" id="box1" 
+                        position="  0  1 -4" width=".3" height=".3" depth=".3" 
+                        material="src: url(textures/yellowBg.jpeg)">
+                </a-box>
+                <a-box cursor-listener class="shootable" id="box2" 
+                        position="  1  1 -4" width=".3" height=".3" depth=".3" 
+                        material="src: url(textures/yellowBg.jpeg)">
+                </a-box>
+                <a-box cursor-listener class="shootable" id="box3" 
+                        position=" -1  0 -4" width=".3" height=".3" depth=".3" 
+                        material="src: url(textures/yellowBg.jpeg)">
+                </a-box>
+                <a-box cursor-listener class="shootable" id="box4" 
+                        position="  0  0 -4" width=".3" height=".3" depth=".3" 
+                        material="src: url(textures/yellowBg.jpeg)">
+                </a-box>
+                <a-box cursor-listener class="shootable" id="box5" 
+                        position="  1  0 -4" width=".3" height=".3" depth=".3" 
+                        material="src: url(textures/yellowBg.jpeg)">
+                </a-box>
+                <a-box cursor-listener class="shootable" id="box6" 
+                        position=" -1 -1 -4" width=".3" height=".3" depth=".3" 
+                        material="src: url(textures/yellowBg.jpeg)">
+                </a-box>
+                <a-box cursor-listener class="shootable" id="box7" 
+                        position="  0 -1 -4" width=".3" height=".3" depth=".3" 
+                        material="src: url(textures/yellowBg.jpeg)">
+                </a-box>
+                <a-box cursor-listener class="shootable" id="box8" 
+                        position="  1 -1 -4" width=".3" height=".3" depth=".3" 
+                        material="src: url(textures/yellowBg.jpeg)">
+                </a-box>
+        </a-entity>
+    </a-scene>
+  </body>
+</html>
